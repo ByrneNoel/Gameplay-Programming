@@ -22,7 +22,7 @@ build:	$(BUILD_DIR)
 
 	@echo ${MSG_START}
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -I${INC_DIR}
-	@echo "\033[0;32m${MSG_END}\033[0m"
+	@echo ${MSG_END}
 	./${TARGET} # Auto runs program
 
 $(BUILD_DIR):
