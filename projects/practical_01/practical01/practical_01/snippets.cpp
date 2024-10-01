@@ -16,14 +16,15 @@ int main()
 
 	std::cout << "New value of b: " << b << "\n";
 
-	int* dynamicArray = new int[5];
+	int* dynamicArray = new int[5]();	// needs to be initialized
 	
 	
 	std::cout << "Dynamic memory: ";
 
 	for (int i = 0; i < 5; i++)
 	{
-		std::cout << (dynamicArray[i] = i + 1) << " ";
+		dynamicArray[i] = i + 1;	// also needs to be initialized
+		std::cout << dynamicArray[i] << " ";
 	}
 
 	delete[] dynamicArray;
@@ -46,7 +47,7 @@ int main()
 
 
 
-	return 1;
+	return 0;
 
 
 }
