@@ -34,10 +34,8 @@ struct Missile
 
 	void arm()
 	{
-		if (armed)
-			armed = false;
-		else
-			armed = true;
+		armed = !armed;
+		
 	}
 
 	void update()
@@ -62,7 +60,11 @@ void displayMenu()
 {
 	cout << "1. Warhead" << endl;
 	cout << "2. Fire Missile" << endl;
-	cout << "3. Exit" << endl;
+	cout << "3. Set Target Coordinates" << endl; 
+	cout << "4. Exit" << endl;
+
+	
+
 }
 
 void warHead(Missile &missle)
@@ -79,7 +81,39 @@ void updateMisslePosition(Missile& missle)
 	missle.update();
 }
 
+
+bool checkHit(Target* target, Missile* missle)
+{
+	int targetX = target->coordinates.x;	// get the coordinates
+	int targetY = target->coordinates.y;
+
+	int missileX = missle->coordinates.x;	// get the missle
+	int missileY = missle->coordinates.y;
+
+	if (missle->payload == EXPLOSIVE)
+		{
+			return missileX == targetX && missileY == targetY;
+		}
+
+	// check 3x3
+	else if (missle->payload == NUCLEAR)
+		{
+			return(missileX >= targetX - 1 && missileX <= targetX + 1) &&
+			(missileY >= targetY - 1 && missileY <= targetY + 1);
+		}
+
+	return false;
+			
+}
+
+void setTargetCoordinates(Enemy& enemy)
+{
+	cout << "Enter target coordinates (x y): ";
+	cin >> enemy.coordinates.x >> enemy.coordinates.y;
+}
+
 bool checkHit();
+
 
 int main()
 {
@@ -101,14 +135,24 @@ int main()
 		case 2:
 			missle.arm();	// Ready the missle
 			updateMisslePosition(missle);
+
+			if (checkHit(&enemy, &missle))
+			{
+				cout << "HIT" << endl;
+			}
+			else
+			{
+				cout << "Missed" << endl;
+			}
 			break;
 		case 3:
-			return 0; // Exit
+			setTargetCoordinates(enemy);
+			break;
+		case 4:
+			return 0;
 		default:
 			cout << "Invalid option" << endl;
 		}
-
-		
 	}
-	
 }
+
