@@ -84,10 +84,10 @@ void updateMisslePosition(Missile& missle)
 
 bool checkHit(Target* target, Missile* missle)
 {
-	int targetX = target->coordinates.x;	// get the coordinates
+	int targetX = target->coordinates.x;	// get the targets coordinates
 	int targetY = target->coordinates.y;
 
-	int missileX = missle->coordinates.x;	// get the missle
+	int missileX = missle->coordinates.x;	// get the missles coordinates
 	int missileY = missle->coordinates.y;
 
 	if (missle->payload == EXPLOSIVE)
@@ -95,10 +95,11 @@ bool checkHit(Target* target, Missile* missle)
 			return missileX == targetX && missileY == targetY;
 		}
 
-	// check 3x3
+	// check if missle is nuclear
+
 	else if (missle->payload == NUCLEAR)
 		{
-			return(missileX >= targetX - 1 && missileX <= targetX + 1) &&
+			return(missileX >= targetX - 1 && missileX <= targetX + 1) &&	// returns 3x3 area
 			(missileY >= targetY - 1 && missileY <= targetY + 1);
 		}
 
