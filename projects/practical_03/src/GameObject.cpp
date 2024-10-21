@@ -23,10 +23,20 @@ void GameObject::setCooldown(int cd)
 {
     cooldown = cd;
 }
-// Default defend implementation
+
+bool GameObject::isDefending() const
+{
+    return defending;
+}
+
+void GameObject::setDefending(bool value)
+{
+    defending = value;
+}
+
 void GameObject::defend()
 {
-    std::cout << name << " GameObject : Defending..." << std::endl;
+    defending = true;
 }
 
 // Default walk implementation
@@ -36,8 +46,15 @@ void GameObject::walk()
 }
 
 // Default takeDamage implementation
-void GameObject::takeDamage(int damage)
+ void GameObject::takeDamage(int damage)
 {
-    health -= damage;
-    std::cout << name << " GameObject : Takes Damage : " << damage << " Health : " << health << std::endl;
-}
+    if (defending == true)
+    {
+        std::cout << name << " is defending and takes no damage!\n";
+    }
+    else 
+    {
+        health -= damage;
+        std::cout << name << " takes " << damage << " damage and now has " << health << " health left.\n";
+    }
+ }

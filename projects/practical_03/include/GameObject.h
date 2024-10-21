@@ -11,10 +11,11 @@ protected:
     std::string name; // Protected so derived classes can access it
     int health;       // Protected so derived classes can access it
     int cooldown;     // Tracks the cooldowns
+    bool defending;
 public:
     // Constructor to initialize health (default is set to 100)
     GameObject(std::string name = "PlayerUnknown", int health = 100, int cooldown = 0) 
-       : name(name), health(health), cooldown(cooldown) {}
+       : name(name), health(health), cooldown(cooldown), defending (false) {}
 
     
     std::string getName() const;
@@ -26,6 +27,10 @@ public:
 
     // Sets the cooldown
     void setCooldown(int);
+
+    bool isDefending() const;
+
+    void setDefending(bool value);
        
     // Pure virtual function for attack. This function must be implemented by derived classes.
     virtual void attack(GameObject&) = 0;

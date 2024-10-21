@@ -15,6 +15,8 @@ private:
     GameObject *winner = nullptr;
 
 public:
+    int counter = 0;
+
     Game() : player("Knight"), npc("Dragon") 
     {
         srand(time(0));
@@ -29,6 +31,7 @@ public:
 
         cout << "Let go create an NPC" << endl;
         npc.walk(); 
+           
                 
 
         // Main GameLoop
@@ -41,8 +44,13 @@ public:
             if (npc.getCooldown() > 0) npc.setCooldown(npc.getCooldown() - 1);
 
             npc.attack(player); // NPC attacks Player - Bound at runtime to NPC's attack()
-          
                 
+
+            if (counter == 3)
+            {
+                 npc.taunt();
+                 player.charge();
+            }
 
             // Check for winner
             if (player.getHealth() <= 0)
@@ -55,6 +63,7 @@ public:
                 winner = &player;
                 break; // End loop if winner is determined
             }
+            counter++;
         }
 
         // Output the winner
@@ -62,6 +71,7 @@ public:
         {
             std::cout << winner->getName() << " has won the battle!" << std::endl;
         }
+       
     }
 };
 

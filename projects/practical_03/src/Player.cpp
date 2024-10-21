@@ -40,10 +40,12 @@ void Player::attack(GameObject& target)
         basicAttack(target);
         break;
     }
+    
+    defending = false;
 }
 void Player::basicAttack(GameObject& target)
 {
-    std::cout << name << " attacks " << target.getName() << " with a Basic Attacl\n";
+    std::cout << name << " attacks " << target.getName() << " with a Basic Attack\n";
     target.takeDamage(7);
 }
 
@@ -76,4 +78,5 @@ void Player::defend()
 {
     std::cout << name << " takes a defensive stance." << std::endl;
     cooldown = 3;
+    defending = true;
 }

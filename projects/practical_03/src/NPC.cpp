@@ -33,6 +33,8 @@ void NPC::attack(GameObject &target)
         flameBreath(target);
         break;
     }
+
+    defending = false;
 }
 
 void NPC::flameBreath(GameObject& target)
@@ -46,7 +48,7 @@ void NPC::flameBreath(GameObject& target)
 
     else
     {
-        std::cout << name << " ;s Flame Breath is on cooldown for " << cooldown << " more turns\n";
+        std::cout << name << "'s Flame Breath is on cooldown for " << cooldown << " more turns\n";
     }
 }
 
@@ -61,7 +63,7 @@ void NPC::tailSwipe(GameObject& target)
 
     else
     {
-        std::cout << name << " ;s Tail Swipe is on cooldown for " << cooldown << " more turns\n";
+        std::cout << name << "'s Tail Swipe is on cooldown for " << cooldown << " more turns\n";
     }
 }
 
@@ -71,4 +73,6 @@ void NPC::defend()
 {
     std::cout << name << " uses Scales Of Protection" << std::endl;
     cooldown = 3;
+    defending = true;
+
 }
