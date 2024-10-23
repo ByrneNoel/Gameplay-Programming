@@ -55,6 +55,6 @@ void GameObject::walk()
     else 
     {
         health -= damage;
-        std::cout << name << " takes " << damage << " damage and now has " << health << " health left.\n";
+        std::cout << name << " takes " << damage << " damage and now has " << health << " health left.\n\n";
     }
  }

@@ -5,7 +5,7 @@
 // Method for NPC to taunt the player
 void NPC::taunt()
 {
-    std::cout << name << " taunts you: 'Is that all you've got?'" << std::endl;
+    std::cout <<"\n" << name << " taunts you: 'Is that all you've got?'" << std::endl;
 }
 
 // Specific implementation of walk()
@@ -17,7 +17,10 @@ void NPC::walk()
 // Implementation of pure virtual attack method
 void NPC::attack(GameObject &target)
 {
+    defending = false;
+
     int option = rand() % 2 + 1;    // random attack
+
     switch (option)
     {
     case 1:
@@ -34,7 +37,6 @@ void NPC::attack(GameObject &target)
         break;
     }
 
-    defending = false;
 }
 
 void NPC::flameBreath(GameObject& target)
@@ -70,9 +72,16 @@ void NPC::tailSwipe(GameObject& target)
 
 // Optionally override defend method
 void NPC::defend()
-{
-    std::cout << name << " uses Scales Of Protection" << std::endl;
-    cooldown = 3;
-    defending = true;
+{  
+    if (cooldown == 0)
+    {
+        std::cout << name << " uses Scales Of Protection" << std::endl;
+        cooldown = 3;
+        defending = true;
+    }
 
+    else
+    {
+        std::cout << name << "'s Scales of Proection is on cooldown for " << cooldown << " more turns\n";
+    }
 }

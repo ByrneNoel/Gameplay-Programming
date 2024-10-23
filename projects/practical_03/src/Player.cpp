@@ -17,9 +17,11 @@ void Player::walk()
 // Implementation of pure virtual attack method
 void Player::attack(GameObject& target)
 {
-    std::cout << "Choose an attack:\n1. Basic Attack\n2. Sword Slash\n3. Shield Bash\n4. Defensive Stance\n" ;
+    std::cout << "\nChoose an attack:\n1. Basic Attack\n2. Sword Slash\n3. Shield Bash\n4. Defensive Stance\n" ;
     int option;
     std::cin >> option;
+
+    defending = false;
 
     switch (option)
     {
@@ -41,7 +43,6 @@ void Player::attack(GameObject& target)
         break;
     }
     
-    defending = false;
 }
 void Player::basicAttack(GameObject& target)
 {
@@ -76,7 +77,15 @@ void Player::shieldBash(GameObject& target)
 // Optionally override defend method
 void Player::defend() 
 {
-    std::cout << name << " takes a defensive stance." << std::endl;
-    cooldown = 3;
-    defending = true;
+    if (cooldown == 0)
+    {
+         std::cout << name << " takes a Defensive Stance." << std::endl;
+         cooldown = 3;
+         defending = true;
+    }
+
+    else
+    {
+        std::cout << name << "'s Defensive Stance is on cooldown for  " << cooldown << " more turns\n";
+    }
 }
