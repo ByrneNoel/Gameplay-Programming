@@ -1,0 +1,65 @@
+{
+	"folders": [
+		{
+			"name": "Linux Config",
+			"path": "linux"
+		},
+		{
+			"name": "Windows Config",
+			"path": "windows"
+		},
+		{
+			"name": "macOS Config",
+			"path": "macos"
+		},
+		{
+			"name": "Source Code",
+			"path": "src"
+		},
+		{
+			"name": "Header Files",
+			"path": "include"
+		},
+		{
+			"name": "Debug Build",
+			"path": "debug"
+		},
+		{
+			"name": "Release Build",
+			"path": "release"
+		},
+		{
+			"name": "Web Build",
+			"path": "web"
+		},
+		{
+			"name": "Web Template",
+			"path": "template"
+		},
+		{
+			"name": "Root",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.vscode": true,
+			"**/linux": true,
+			"**/macos": true,
+			"**/windows": true,
+			"**/raylib_starter": true,
+			"**/cute_headers": true,
+			"**/.gitmodules": true,
+			"**/objects": true
+		},
+		"files.associations": {
+			"collision.h": "c",
+			"stdio.h": "c",
+			"game.h": "c",
+			"constants.h": "c",
+			"cute_c2.h": "c",
+			"string.h": "c",
+			"raylib.h": "c"
+		}
+	}
+}
