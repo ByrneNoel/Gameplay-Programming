@@ -151,10 +151,39 @@ void DrawGame()
             DrawCircle((int)npcs[i].line.end.x, (int)npcs[i].line.end.y, 10, npcs[i].line.color);
             break;
         case CAPSULE:
-             DrawLine((int)npcs[i].capsule.capsule.a.x, (int)npcs[i].capsule.capsule.a.y,
-                    (int)npcs[i].capsule.capsule.b.x, (int)npcs[i].capsule.capsule.b.y, npcs[i].color);
-             DrawCircle((int)npcs[i].capsule.capsule.a.x, (int)npcs[i].capsule.capsule.a.y, npcs[i].capsule.capsule.r, npcs[i].color);
-             DrawCircle((int)npcs[i].capsule.capsule.b.x, (int)npcs[i].capsule.capsule.b.y, npcs[i].capsule.capsule.r, npcs[i].color);
+            // Draw the main line segment of the capsule
+            DrawLine((int)npcs[i].capsule.capsule.a.x, (int)npcs[i].capsule.capsule.a.y,
+                (int)npcs[i].capsule.capsule.b.x, (int)npcs[i].capsule.capsule.b.y, npcs[i].color);
+
+            // Draw the circles at each endpoint of the capsule
+            DrawCircle((int)npcs[i].capsule.capsule.a.x, (int)npcs[i].capsule.capsule.a.y, npcs[i].capsule.capsule.r, npcs[i].color);
+            DrawCircle((int)npcs[i].capsule.capsule.b.x, (int)npcs[i].capsule.capsule.b.y, npcs[i].capsule.capsule.r, npcs[i].color);
+
+            // Direction vector
+            float dx = npcs[i].capsule.capsule.b.x - npcs[i].capsule.capsule.a.x;
+            float dy = npcs[i].capsule.capsule.b.y - npcs[i].capsule.capsule.a.y;
+            float length = sqrtf(dx * dx + dy * dy);
+
+           
+            if (length > 0.0f)
+            {
+                // Calculate the  direction for the rectangle width
+                float perpX = dy * (npcs[i].capsule.capsule.r / length);
+                float perpY = -dx * (npcs[i].capsule.capsule.r / length);
+
+               
+                Vector2 rectPoints[4] =
+                {
+                    { npcs[i].capsule.capsule.a.x + perpX, npcs[i].capsule.capsule.a.y + perpY },
+                    { npcs[i].capsule.capsule.a.x - perpX, npcs[i].capsule.capsule.a.y - perpY },
+                    { npcs[i].capsule.capsule.b.x - perpX, npcs[i].capsule.capsule.b.y - perpY },
+                    { npcs[i].capsule.capsule.b.x + perpX, npcs[i].capsule.capsule.b.y + perpY }
+                };
+                
+               
+                DrawTriangle(rectPoints[0], rectPoints[1], rectPoints[2], npcs[i].color);
+                DrawTriangle(rectPoints[2], rectPoints[3], rectPoints[0], npcs[i].color);
+            }
             break;
 
         case COLLISION_RAY:
@@ -169,6 +198,7 @@ void DrawGame()
     }
 
     DrawCircle(player.p.x, player.p.y, player.r, GREEN); // Draw Player
+
 }
 
 // Game Cleanup
