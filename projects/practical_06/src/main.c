@@ -39,4 +39,5 @@ void GameLoop(GameData *gameData)
 {
     UpdateGame(gameData);
     DrawGame(gameData);
+   
 }

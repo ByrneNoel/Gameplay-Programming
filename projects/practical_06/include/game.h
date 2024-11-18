@@ -3,11 +3,16 @@
 
 #include "player.h"
 #include "mediator.h"
+#include "invoker.h"
 
-typedef struct {
+
+typedef struct GameData 
+{
     Player player;
+    Invoker* invoker;
     Mediator* mediator;
 } GameData;
+
 
 void InitGame(GameData* gameData);
 void UpdateGame(GameData* gameData);

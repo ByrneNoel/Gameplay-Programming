@@ -7,8 +7,8 @@ typedef struct Mediator Mediator;
 
 typedef struct Command
 {
-    void (*execute)(struct Command*, Mediator*);
-    void (*undo)(struct Command*, Mediator*);
+    void (*execute)(struct Command* command, Mediator* mediator);
+    void (*undo)(struct Command* command, Mediator* mediator);
 }Command;
 
 typedef enum {

@@ -5,8 +5,10 @@
 #include "../include/game.h"
 #include "../include/input_manager.h"
 #include "../include/command.h"
-
+#include "../include/invoker.h"
 #include "../include/constants.h"
+#include "../include/player.h"
+#include "../include/mediator.h"
 
 void InitGame(GameData *gameData)
 {
@@ -19,12 +21,13 @@ void InitGame(GameData *gameData)
 
 	gameData->player = (Player){screenWidth / 2, screenHeight / 2, 100}; // Initialize player
 	gameData->mediator = create_mediator(&gameData->player);
+	gameData->invoker = create_invoker(gameData->mediator);
 
 	// Initialise Input Manage
 	init_input_manager();
 }
 
-void UpdateGame(GameData *gameData)
+void UpdateGame(GameData* gameData)
 {
 	// Poll input and execute command
 	Command *command = NULL;
@@ -69,8 +72,8 @@ void UpdateGame(GameData *gameData)
 	// Execute command
 	if (command) 
 	{
-		mediator_execute_command(gameData->mediator, command);
-		free(command);
+		invoker_set_command(gameData->invoker, command);
+		invoker_execute_command(gameData->invoker);
 	}
 }
 
@@ -91,6 +94,8 @@ void ExitGame(GameData *gameData)
 {
 	// Free the mediator if needed
 	free(gameData->mediator);
+
+	free_invoker(gameData->invoker);
 
 	// Close the window
 	CloseWindow();

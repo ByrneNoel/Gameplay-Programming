@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../include/player.h"
+#include "../include/memento.h"
 
 // Move player up
 void player_move_up(Player* player)
@@ -64,4 +65,16 @@ void player_attack(Player* player)
 void player_shield(Player* player)
 {
     printf("Player shields at (%d, %d)\n", player->x, player->y);
+}
+
+// Store player's current state as a Memento
+Memento * player_create_memento(const Player * player)
+{
+    return create_memento(player);
+}
+
+// Restore player's state from a Memento
+void player_restore_state(Player* player, const Memento* memento) 
+{
+    restore_from_memento(player, memento);
 }

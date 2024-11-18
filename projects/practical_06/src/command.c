@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "../include/command.h"
 #include "../include/mediator.h"
+#include "../include/player.h"
+#include "../include/memento.h"
 
 // Move Up Command Functions
 void move_up_execute(Command* command, Mediator* mediator) 
@@ -111,10 +113,24 @@ void jump_execute(Command* command, Mediator* mediator)
     player_jump(mediator->player);
 }
 
+void jump_undo(Command* command, Mediator* mediator)
+{
+    (void)command;  
+    (void)mediator; 
+
+}
+
 void run_execute(Command* command, Mediator* mediator) 
 {
     (void)command;
     player_run(mediator->player);
+}
+
+void run_undo(Command* command, Mediator* mediator) 
+{
+    (void)command;
+    (void)mediator; 
+    
 }
 
 
@@ -136,26 +152,41 @@ void attack_execute(Command* command, Mediator* mediator)
     player_attack(mediator->player);
 }
 
+void attack_undo(Command* command, Mediator* mediator)
+{
+    (void)command;  
+    (void)mediator; 
+ }
+
 void shield_execute(Command* command, Mediator* mediator) 
 {
     (void)command;
     player_shield(mediator->player);
 }
 
+void shield_undo(Command* command, Mediator* mediator)
+{
+    (void)command;  
+    (void)mediator; 
+ }
+
 Command* create_jump_command() 
 {
     Command* command = (Command*)malloc(sizeof(Command));
     command->execute = jump_execute;
+    command->undo = jump_undo;
     return command;
 }
+
 Command* create_run_command() 
 {
     Command* command = (Command*)malloc(sizeof(Command));
     command->execute = run_execute;
+    command->undo = run_undo;
     return command;
 }
 
-Command* create_crouch_command()
+Command* create_crouch_command() 
 {
     Command* command = (Command*)malloc(sizeof(Command));
     command->execute = crouch_execute;
@@ -163,10 +194,11 @@ Command* create_crouch_command()
     return command;
 }
 
-Command* create_attack_command() 
+Command* create_attack_command()
 {
     Command* command = (Command*)malloc(sizeof(Command));
     command->execute = attack_execute;
+    command->undo = attack_undo;
     return command;
 }
 
@@ -174,5 +206,6 @@ Command* create_shield_command()
 {
     Command* command = (Command*)malloc(sizeof(Command));
     command->execute = shield_execute;
+    command->undo = shield_undo;
     return command;
 }
