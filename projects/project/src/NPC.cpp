@@ -1,5 +1,5 @@
 #include "NPC.h"
-#include "AIState.h"
+#include "Player.h"
 #include <iostream>
 
 
@@ -15,6 +15,14 @@ NPC::NPC(std::string name, int health, int x, int y)
     defendingTexture = LoadTexture("assets/npcHit.png");
     magicTexture = LoadTexture("assets/satyr_magic.png");
     deadTexture = LoadTexture("assets/npcDead.png");
+
+    frameWidth = idleTexture.width / 5;   // Idle: 5 frames
+    runningFrameWidth = runningToAttackTexture.width / 7;  // Running: 7 frames
+    attackingFrameWidth = attackingTexture.width / 6;  // Attack: 6 frames
+    defendingFrameWidth = defendingTexture.width / 1;  // Defend: 1 frames
+    magicFrameWidth = magicTexture.width / 5;  // Magic: 5 frames
+    deadFrameWidth = deadTexture.width / 7;  // Dead: 7 frames
+    frameHeight = idleTexture.height;
 }
 
 NPC::~NPC() 
@@ -85,38 +93,125 @@ void NPC::defend()
 
 void NPC::update() 
 {
+    updateAnimation();
+
     // Update state if dead
-    if (health <= 0) {
+    if (health <= 0) 
+    {
         state = NPCState::DEAD;
     }
 }
 
-void NPC::draw() 
+// Draw the NPC
+void NPC::draw()
 {
-    // Draw the NPC sprite based on the state
+    Rectangle sourceRect = getFrameRectangle();
+    Rectangle destRect = { position.x, position.y, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    Texture2D currentTexture;
 
-    if (state == NPCState::IDLE) 
-    {
-        DrawTexture(idleTexture, position.x, position.y, WHITE);
+    switch (state) {
+    case NPCState::IDLE: currentTexture = idleTexture; break;
+    case NPCState::RUNNING_TO_ATTACK: currentTexture = runningToAttackTexture; break;
+    case NPCState::ATTACKING: currentTexture = attackingTexture; break;
+    case NPCState::DEFENDING: currentTexture = defendingTexture; break;
+    case NPCState::USING_MAGIC: currentTexture = magicTexture; break;
+    case NPCState::DEAD: currentTexture = deadTexture; break;
+    default: currentTexture = idleTexture; break;
     }
-    else if (state == NPCState::RUNNING_TO_ATTACK)
+
+    DrawTexturePro(currentTexture, sourceRect, destRect, { 0.0f, 0.0f }, 0.0f, WHITE);
+}
+
+
+void NPC::handleAI(Player& player) 
+{
+    if (state == NPCState::DEAD) 
     {
-        DrawTexture(runningToAttackTexture, position.x, position.y, WHITE);
+        return; 
     }
-    else if (state == NPCState::ATTACKING) 
+
+    // Simple AI behavior logic
+    if (player.getHealth() <= 20) 
     {
-        DrawTexture(attackingTexture, position.x, position.y, WHITE);
+        // Use a magic attack if the player is low on health
+        std::cout << name << " uses a magical attack on " << player.getName() << "!\n";
+        setState(NPCState::USING_MAGIC);
+        player.takeDamage(25); // Example damage
     }
-    else if (state == NPCState::DEFENDING) 
-    {
-        DrawTexture(defendingTexture, position.x, position.y, WHITE);
+    else if (rand() % 2 == 0) {
+        // Attack half the time
+        std::cout << name << " attacks " << player.getName() << "!\n";
+        setState(NPCState::ATTACKING);
+        player.takeDamage(15); 
     }
-    else if (state == NPCState::USING_MAGIC) 
+    else 
     {
-        DrawTexture(magicTexture, position.x, position.y, WHITE);
-    }
-    else if (state == NPCState::DEAD)
-    {
-        DrawTexture(deadTexture, position.x, position.y, WHITE);
+        // Defend the other half
+        std::cout << name << " takes a defensive stance!\n";
+        setState(NPCState::DEFENDING);
     }
 }
+
+void NPC::updateAnimation() 
+{
+    timeSinceLastFrame += GetFrameTime();
+
+    if (timeSinceLastFrame >= frameSpeed) 
+    {
+        timeSinceLastFrame = 0.0f;
+        currentFrame++;
+
+        switch (state) {
+        case NPCState::IDLE:
+            if (currentFrame >= idleFrames) currentFrame = 0;
+            break;
+        case NPCState::ATTACKING:
+            if (currentFrame >= attackingFrames) 
+            {
+                currentFrame = 0;
+                setState(NPCState::IDLE); // Return to idle after attack animation
+            }
+            break;
+        case NPCState::DEFENDING:
+            if (currentFrame >= defendingFrames)
+            {
+                currentFrame = 0;
+                setState(NPCState::IDLE); // Return to idle after defense animation
+            }
+            break;
+        case NPCState::USING_MAGIC:
+            if (currentFrame >= magicFrames)
+            {
+                currentFrame = 0;
+                setState(NPCState::IDLE); // Return to idle after magic animation
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+
+
+Rectangle NPC::getFrameRectangle() const 
+{
+    return 
+    {
+        static_cast<float>(currentFrame * frameWidth),
+        0.0f,
+        static_cast<float>(frameWidth),
+        static_cast<float>(frameHeight)
+    };
+}
+
+NPCState NPC::getState() const 
+{
+    return state;
+}
+
+void NPC::setState(NPCState newState) 
+{
+    state = newState;
+}
+

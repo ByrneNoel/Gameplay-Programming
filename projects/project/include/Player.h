@@ -5,9 +5,7 @@
 #include "raylib.h"
 #include <string>
 
-// Enum for player states
-enum class PlayerState 
-{
+enum class PlayerState {
     IDLE,
     RUNNING_TO_ATTACK,
     ATTACKING,
@@ -16,8 +14,7 @@ enum class PlayerState
     DEAD
 };
 
-class Player : public GameObject
-{
+class Player : public GameObject {
 private:
     PlayerState state;
     int swordCooldown;
@@ -33,6 +30,12 @@ private:
 
     Vector2 position;
 
+    // Animation-related fields
+    int currentFrame;
+    float timeSinceLastFrame;
+    float frameSpeed;
+    int frameWidth, frameHeight;
+    int runningFrameWidth, attackingFrameWidth, defendingFrameWidth, magicFrameWidth, deadFrameWidth;
 
 public:
     Player(std::string name, int health = 100, int x = 300, int y = 300);
@@ -50,6 +53,13 @@ public:
     void update();
     void draw();
     void handleInput();
+
+    PlayerState getState() const;
+    void setState(PlayerState newState);
+
+    // Animation helper methods
+    void updateAnimation();
+    Rectangle getFrameRectangle() const;
 };
 
 #endif // PLAYER_H

@@ -5,9 +5,7 @@
 #include "ShieldBlockCommand.h"
 #include "MagicCommand.h"
 #include "InputHandler.h"
-#include "AIState.h"
 #include <iostream>
-
 
 const int screenWidth = 800;
 const int screenHeight = 600;
@@ -21,7 +19,7 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Knight vs Beastlord Satyr");
 
     Player player("Knight", 100, 300, 300);
-    NPC beastlordSatyr("Beastlord Satyr", 600, 300);
+    NPC beastlordSatyr("Beastlord Satyr", 50, 600, 300);
 
     InputHandler inputHandler;
     SwordAttackCommand swordCommand;
@@ -33,42 +31,86 @@ int main() {
     inputHandler.bindCommand(KEY_M, &magicCommand);
 
     Turn turn = Turn::PLAYER;
+    bool isGameOver = false;
 
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
-        if (turn == Turn::PLAYER)
+        // Pause Game Logic
+        if (IsKeyPressed(KEY_P)) 
         {
-            player.handleInput();
-
-            if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_D) || IsKeyPressed(KEY_M))
+            while (!WindowShouldClose() && !IsKeyPressed(KEY_P))
             {
-                turn = Turn::NPC;
+                BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawText("Game Paused. Press 'P' to resume.", screenWidth / 2 - 150, screenHeight / 2, 20, GRAY);
+                EndDrawing();
             }
         }
-        else if (turn == Turn::NPC)
+
+        if (!isGameOver) 
         {
-            beastlordSatyr.attack(player);
-            turn = Turn::PLAYER;
+
+            if (turn == Turn::PLAYER) {
+                player.handleInput();
+
+                // Check if player's animation completes before switching turns
+                if (player.getState() == PlayerState::IDLE &&
+                    (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_D) || IsKeyPressed(KEY_M)))
+                {
+                    turn = Turn::NPC;
+                }
+            }
+            else if (turn == Turn::NPC)
+            {
+                beastlordSatyr.handleAI(player);
+
+                // Check if NPC's animation completes before switching turns
+                if (beastlordSatyr.getState() == NPCState::IDLE) 
+                {
+                    turn = Turn::PLAYER;
+                }
+            }
+
+            // Update animations
+            player.updateAnimation();
+            beastlordSatyr.updateAnimation();
+
+            // Update player and NPC logic
+            player.update();
+            beastlordSatyr.update();
+
+            // Game over logic
+            if (player.getHealth() <= 0 || beastlordSatyr.getHealth() <= 0) 
+            {
+                isGameOver = true;
+            }
         }
 
-        player.update();
-        beastlordSatyr.update();
-
-        if (player.getHealth() <= 0 || beastlordSatyr.getHealth() <= 0)
-        {
-            break;
-        }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        player.draw();
-        beastlordSatyr.draw();
+        if (!isGameOver)
+        {
+            player.draw();
+            beastlordSatyr.draw();
 
-        DrawText(TextFormat("Player Health: %d", player.getHealth()), 10, 10, 20, BLACK);
-        DrawText(TextFormat("NPC Health: %d", beastlordSatyr.getHealth()), screenWidth - 200, 10, 20, BLACK);
+            DrawText(TextFormat("Player Health: %d", player.getHealth()), 10, 10, 20, BLACK);
+            DrawText(TextFormat("NPC Health: %d", beastlordSatyr.getHealth()), screenWidth - 200, 10, 20, BLACK);
+        }
+        else
+        {
+            if (player.getHealth() <= 0) 
+            {
+                DrawText("Game Over! NPC Wins!", screenWidth / 2 - 100, screenHeight / 2, 20, RED);
+            }
+            else
+            {
+                DrawText("Victory! Player Wins!", screenWidth / 2 - 100, screenHeight / 2, 20, GREEN);
+            }
+        }
 
         EndDrawing();
     }
