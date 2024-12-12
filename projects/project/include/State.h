@@ -1,38 +1,22 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "GameObject.h"
+#include "raylib.h"
+#include "GameObject.h" // Base class for Player and NPC
 
 class GameObject;
 
-// Abstract base class for all states
 class State {
 public:
-    virtual void enter(GameObject* gameObject) = 0;
-    virtual void execute(GameObject* gameObject) = 0;
-    virtual void exit(GameObject* gameObject) = 0;
+    virtual ~State() = default;
+
+    // State lifecycle methods
+    virtual void enter(GameObject* entity) = 0;
+    virtual void execute(GameObject* entity) = 0;
+    virtual void exit(GameObject* entity) = 0;
+
+    
+    virtual void draw(GameObject* entity) = 0;
 };
 
-// Specific state classes
-class IdleState : public State {
-public:
-    void enter(GameObject* gameObject) override;
-    void execute(GameObject* gameObject) override;
-    void exit(GameObject* gameObject) override;
-};
-
-class AttackState : public State {
-public:
-    void enter(GameObject* gameObject) override;
-    void execute(GameObject* gameObject) override;
-    void exit(GameObject* gameObject) override;
-};
-
-class DefendState : public State {
-public:
-    void enter(GameObject* gameObject) override;
-    void execute(GameObject* gameObject) override;
-    void exit(GameObject* gameObject) override;
-};
-
-#endif
+#endif // STATE_H

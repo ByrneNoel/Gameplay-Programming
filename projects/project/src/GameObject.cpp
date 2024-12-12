@@ -1,94 +1,124 @@
 #include "GameObject.h"
 #include <iostream>
-#include "State.h" 
-#include "raylib.h"
 
 GameObject::GameObject(std::string name, int health, int x, int y)
-    : name(name), health(health), cooldown(0), xPos(x), yPos(y), frame(0), maxFrames(1)
+    : name(name), health(health), position({ (float)x, (float)y }), currentState(nullptr),
+    frameWidth(0), frameHeight(0), currentFrame(0), timeSinceLastFrame(0.0f), frameSpeed(0.2f), frameCount(0), actionComplete(false) {}
+
+GameObject::~GameObject()
 {
-    texture = LoadTexture("default.png");
+    for (auto& pair : animations) 
+    {
+        UnloadTexture(pair.second);
+    }
 }
 
-std::string GameObject::getName() const {
+std::string GameObject::getName() const 
+{
     return name;
 }
 
-int GameObject::getHealth() const {
-    return health;
-}
-
-int GameObject::getCooldown() const {
-    return cooldown;
-}
-
-void GameObject::setCooldown(int cd) {
-    cooldown = cd;
-}
-
-bool GameObject::isDefending() const {
-    return defending;
-}
-
-void GameObject::setDefending(bool value) {
-    defending = value;
-}
-
-void GameObject::defend() {
-    defending = true;
-}
-
-void GameObject::walk() {
-    std::cout << name << " is walking..." << std::endl;
-}
-
-void GameObject::changeState(State* newState)
+int GameObject::getHealth() const
 {
-    // If there is an existing state, call its exit method
-    if (currentState != nullptr) 
-    {
-        currentState->exit(this);
-    }
-
-    // Change to the new state and call its enter method
-    currentState = newState;
-    currentState->enter(this);
+    return health;
 }
 
 void GameObject::takeDamage(int damage) 
 {
-    if (defending) {
-        std::cout << name << " is defending and takes no damage!" << std::endl;
-    }
-    else {
-        health -= damage;
-        std::cout << name << " takes damage: " << damage << ", health: " << health << std::endl;
-    }
+    health -= damage;
+    if (health < 0) health = 0;
 }
 
-void GameObject::setAnimation(const std::string& textureFile, int frames) 
+void GameObject::setDefending(bool defending) 
 {
-    texture = LoadTexture(textureFile.c_str());
-    maxFrames = frames;
+    this->defending = defending;
 }
 
-void GameObject::updateAnimation()
+bool GameObject::isDefending() const 
 {
-    frame = (frame + 1) % maxFrames;
+    return defending;
+}
+
+void GameObject::changeState(State* newState) 
+{
+    if (currentState) 
+    {
+        currentState->exit(this);
+        delete currentState;
+    }
+    currentState = newState;
+    currentState->enter(this);
+
+    actionComplete = false; // Reset actionComplete when changing states
+}
+
+void GameObject::setAnimation(const std::string& animationName, const std::string& texturePath, int frames) {
+    if (animations.find(animationName) == animations.end())
+    {
+        Texture2D texture = LoadTexture(texturePath.c_str());
+        animations[animationName] = texture;
+    }
+    currentAnimation = animationName;
+    frameCount = frames;
+    frameWidth = animations[currentAnimation].width / frameCount;
+    frameHeight = animations[currentAnimation].height;
+    currentFrame = 0;
+    timeSinceLastFrame = 0.0f;
+}
+
+void GameObject::resetAnimation() 
+{
+    currentFrame = 0;
+    timeSinceLastFrame = 0.0f;
+}
+
+void GameObject::updateAnimation() 
+{
+    timeSinceLastFrame += GetFrameTime();
+    if (timeSinceLastFrame >= frameSpeed)
+    {
+        timeSinceLastFrame = 0.0f;
+        currentFrame = (currentFrame + 1) % frameCount;
+    }
 }
 
 void GameObject::draw()
 {
-    DrawTexture(texture, 100, 100, RAYWHITE);
+    if (!currentAnimation.empty() && animations.find(currentAnimation) != animations.end()) 
+    {
+        Texture2D texture = animations[currentAnimation];
+        Rectangle sourceRect = getFrameRectangle();
+        Rectangle destRect = { position.x, position.y, (float)frameWidth * 3.0f, (float)frameHeight * 3.0f };
+        DrawTexturePro(texture, sourceRect, destRect, { 0.0f, 0.0f }, 0.0f, WHITE);
+    }
 }
 
-void GameObject::castMagic() 
+Rectangle GameObject::getFrameRectangle() const 
 {
-    
-    std::cout << name << " casts magic!" << std::endl;
+    return { static_cast<float>(frameWidth * currentFrame), 0.0f, (float)frameWidth, (float)frameHeight };
 }
 
-void GameObject::resetAnimation()
+Texture2D GameObject::getTextureForState() const 
 {
-    
-    setAnimation("idle.png", 1);  // Reset to idle animation with 1 frame
+    return animations.at(currentAnimation);
+}
+
+const Vector2& GameObject::getPosition() const
+{
+    return position;
+}
+
+bool GameObject::isPlayer() const 
+{
+    return false; // Default is NPC; override in Player class
+}
+
+void GameObject::completeAction() 
+{
+    actionComplete = true;
+}
+
+bool GameObject::isAnimationComplete() const 
+{
+    return currentFrame >= frameCount - 1;
 }

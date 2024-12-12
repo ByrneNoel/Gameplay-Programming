@@ -2,64 +2,28 @@
 #define PLAYER_H
 
 #include "GameObject.h"
-#include "raylib.h"
-#include <string>
+#include "State.h"
 
-enum class PlayerState {
-    IDLE,
-    RUNNING_TO_ATTACK,
-    ATTACKING,
-    DEFENDING,
-    USING_MAGIC,
-    DEAD
-};
+class Player : public GameObject 
+{
+protected:
 
-class Player : public GameObject {
-private:
-    PlayerState state;
-    int swordCooldown;
-    int shieldCooldown;
-    int magicCooldown;
-
-    Texture2D idleTexture;
-    Texture2D runningToAttackTexture;
-    Texture2D attackingTexture;
-    Texture2D defendingTexture;
-    Texture2D magicTexture;
-    Texture2D deadTexture;
-
-    Vector2 position;
-
-    // Animation-related fields
-    int currentFrame;
-    float timeSinceLastFrame;
-    float frameSpeed;
-    int frameWidth, frameHeight;
-    int runningFrameWidth, attackingFrameWidth, defendingFrameWidth, magicFrameWidth, deadFrameWidth;
+    bool actionComplete;
 
 public:
-    Player(std::string name, int health = 100, int x = 300, int y = 300);
-    ~Player(); // Destructor to unload textures
+    Player(std::string name, int health, int x, int y);
+    
+    void reset();
+    bool isPlayer() const override;
+    void update() override;
 
-    void charge();
-    void walk() override;
-    void attack(GameObject& target) override;
-    void basicAttack(GameObject& target);
-    void swordSlash(GameObject& target);
-    void shieldBash(GameObject& target);
-    void defend() override;
-    void useMagic(GameObject& target);
+    bool isActionComplete() const { return actionComplete; }
+    void resetAction() { actionComplete = false; }
+    void completeAction() { actionComplete = true; }
 
-    void update();
-    void draw();
-    void handleInput();
+private:
+    Vector2 originalPosition;
 
-    PlayerState getState() const;
-    void setState(PlayerState newState);
-
-    // Animation helper methods
-    void updateAnimation();
-    Rectangle getFrameRectangle() const;
 };
 
 #endif // PLAYER_H

@@ -1,16 +1,13 @@
-#ifndef INPUT_HANDLER_H
-#define INPUT_HANDLER_H
+#ifndef INPUTHANDLER_H
+#define INPUTHANDLER_H
 
-#include <unordered_map>
-#include "Command.h"
+#include "raylib.h"
+#include "Player.h"
 
 class InputHandler 
 {
 public:
-    void handleInput(GameObject& gameObject);
-    void bindCommand(int key, Command* command);
-private:
-    std::unordered_map<int, Command*> commandMap;
+    void handleInput(Player& player);
 };
 
-#endif // INPUT_HANDLER_H
+#endif // INPUTHANDLER_H

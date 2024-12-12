@@ -2,66 +2,30 @@
 #define NPC_H
 
 #include "GameObject.h"
-#include "Player.h"
-#include "raylib.h"
-#include <string>
+#include "State.h"
 
-enum class NPCState 
+class NPC : public GameObject 
 {
-    IDLE,
-    RUNNING_TO_ATTACK,
-    ATTACKING,
-    DEFENDING,
-    USING_MAGIC,
-    DEAD
-};
 
-class NPC : public GameObject
-{
-private:
-    NPCState state;
-
-    int idleFrames;         // Frame counts for animations
-    int attackingFrames;
-    int defendingFrames;
-    int magicFrames;
-
-    Texture2D idleTexture;
-    Texture2D runningToAttackTexture;
-    Texture2D attackingTexture;
-    Texture2D defendingTexture;
-    Texture2D magicTexture;
-    Texture2D deadTexture;
-
-    int currentFrame;
-    float timeSinceLastFrame;
-    float frameSpeed;
-    int frameWidth, frameHeight;
-    int runningFrameWidth, attackingFrameWidth, defendingFrameWidth, magicFrameWidth, deadFrameWidth;
-
-    Vector2 position;
+protected:
+    
+    bool actionComplete;
 
 public:
-    NPC(std::string name, int health = 100, int x = 500, int y = 300);
-    ~NPC(); // Destructor to unload textures
+    NPC(std::string name, int health, int x, int y);
+    ~NPC();
+    void reset();
+    void takeTurn(GameObject& target);
+    void update() override;
 
-    void taunt();
-    void walk() override;
-    void attack(GameObject& target) override;
-    void flameBreath(GameObject& target);
-    void tailSwipe(GameObject& target);
-    void defend() override;
+    bool isActionComplete() const { return actionComplete; }
+    void resetAction() { actionComplete = false; }
+    void completeAction() { actionComplete = true; }
 
-    void update();
-    void draw();
+private:
 
-    NPCState getState() const;
-    void setState(NPCState newState);
+    Vector2 originalPosition;
 
-    void handleAI(Player& player);
-
-    void updateAnimation();
-    Rectangle getFrameRectangle() const;
 };
 
 #endif // NPC_H
