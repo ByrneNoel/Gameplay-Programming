@@ -17,13 +17,11 @@ public:
     bool isPlayer() const override;
     void update() override;
 
-    bool isActionComplete() const { return actionComplete; }
-    void resetAction() { actionComplete = false; }
-    void completeAction() { actionComplete = true; }
+       
 
 private:
     Vector2 originalPosition;
-
+   
 };
 
 #endif // PLAYER_H

@@ -3,6 +3,7 @@
 #include "AttackState.h"
 #include "DefendState.h"
 #include "MagicState.h"
+#include "DeadState.h"
 
 
 Player::Player(std::string name, int health, int x, int y)
@@ -10,11 +11,14 @@ Player::Player(std::string name, int health, int x, int y)
 {
 
     // Load specific animations for Player
-    setAnimation("idle", "assets/playerIdel.png", 5);    // Idle animation (5 frames)
-    setAnimation("running", "assets / playerRun.png", 7);     // Running animation (7 frames)
+    setAnimation("running", "assets/playerRun.png", 7);     // Running animation (7 frames)
     setAnimation("attack", "assets/playerAttack.png", 6);  // Attacking animation (6 frames)
     setAnimation("block", "assets/playerBlock.png", 2);  // Defending animation (2 frames)
+    setAnimation("magic", "assets/playerMagic.png", 6);  
     setAnimation("dead", "assets/playerDead.png", 7);    // Death animation (7 frames)
+    setAnimation("idle", "assets/playerIdel.png", 5);    // Idle animation (5 frames)
+
+    changeState(new IdleState());
 }
 
 void Player::reset() 
@@ -34,3 +38,7 @@ void Player::update()
 {
     if (currentState) currentState->execute(this); // Update the current state
 }
+
+
+
+

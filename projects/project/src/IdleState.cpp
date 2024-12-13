@@ -6,19 +6,20 @@ void IdleState::enter(GameObject* entity)
 {
     entity->setCurrentFrame(0);
     entity->setTimeSinceLastFrame(0.0f);
-    entity->setFrameSpeed(0.2f);
+    entity->setFrameSpeed(0.175f);
 
 
     if (entity->isPlayer()) 
     {
-        entity->setAnimation("idle", "assets/playerIdel.png", 4);
+        entity->setAnimation("idle", "assets/playerIdel.png", 5);
     }
     else 
     {
-        entity->setAnimation("idle", "assets/npcIdel.png", 2);
+        entity->setAnimation("idle", "assets/npcIdel.png", 5);
     }
 
     std::cout << entity->getName() << " enters IDLE state!" << std::endl;
+    entity->resetAnimation();
 }
 
 void IdleState::execute(GameObject* entity)

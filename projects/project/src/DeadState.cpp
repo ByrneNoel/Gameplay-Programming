@@ -10,10 +10,10 @@ void DeadState::enter(GameObject* entity)
 
     if (entity->isPlayer()) 
     {
-        entity->setAnimation("dead", "assets/playerDead.png", 6);
+        entity->setAnimation("dead", "assets/playerDead.png", 7);
     }
     else {
-        entity->setAnimation("dead", "assets/npcDead.png", 5);
+        entity->setAnimation("dead", "assets/npcDead.png", 7);
     }
 
     std::cout << entity->getName() << " has died." << std::endl;

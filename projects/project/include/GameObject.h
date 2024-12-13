@@ -6,6 +6,8 @@
 #include <map>
 #include "State.h"
 
+
+
 class State; // Forward declaration
 
 
@@ -24,6 +26,7 @@ protected:
     std::map<std::string, Texture2D> animations; // Map of animations
     std::string currentAnimation;
     bool actionComplete;
+    GameObject* target;
 
 public:
     GameObject(std::string name, int health, int x, int y);
@@ -47,10 +50,17 @@ public:
     void takeDamage(int damage);
     void setDefending(bool defending);
     bool isDefending() const;
+
     void changeState(State* newState);
+
+    void setTarget(GameObject* targetEntity) { target = targetEntity; }
+    GameObject* getTarget() const { return target; }
 
     void completeAction();
     bool isAnimationComplete() const;
+    bool isActionComplete() const { return actionComplete; }
+
+    void setPosition(const Vector2& newPos);
 
     // Animation methods
     void setAnimation(const std::string& animationName, const std::string& texturePath, int frames);
@@ -63,6 +73,9 @@ public:
     const Vector2& getPosition() const;
 
     virtual void update() {};
+
+    virtual void resetAction();
+    std::string getCurrentStateName() const;
 
 
     virtual bool isPlayer() const; // To differentiate between Player and NPC

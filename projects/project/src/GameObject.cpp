@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "DeadState.h"
 #include <iostream>
 
 GameObject::GameObject(std::string name, int health, int x, int y)
@@ -26,12 +27,17 @@ int GameObject::getHealth() const
 void GameObject::takeDamage(int damage) 
 {
     health -= damage;
-    if (health < 0) health = 0;
+    if (health <= 0)
+    {
+        health = 0;
+        changeState(new DeadState());
+    }
 }
-
 void GameObject::setDefending(bool defending) 
 {
     this->defending = defending;
+    std::cout << getName() << " setDefending(" << (defending ? "true" : "false") << ") at " << __FILE__ << ":" << __LINE__ << std::endl;
+
 }
 
 bool GameObject::isDefending() const 
@@ -43,14 +49,19 @@ void GameObject::changeState(State* newState)
 {
     if (currentState) 
     {
+        std::cout << getName() << " exits " << typeid(*currentState).name() << " state." << std::endl;
         currentState->exit(this);
         delete currentState;
     }
+
     currentState = newState;
+    std::cout << getName() << " enters " << typeid(*currentState).name() << " state." << std::endl;
     currentState->enter(this);
 
-    actionComplete = false; // Reset actionComplete when changing states
+    
+    std::cout << name << " changed to new state." << std::endl;
 }
+
 
 void GameObject::setAnimation(const std::string& animationName, const std::string& texturePath, int frames) {
     if (animations.find(animationName) == animations.end())
@@ -72,15 +83,19 @@ void GameObject::resetAnimation()
     timeSinceLastFrame = 0.0f;
 }
 
-void GameObject::updateAnimation() 
+void GameObject::updateAnimation()
 {
     timeSinceLastFrame += GetFrameTime();
     if (timeSinceLastFrame >= frameSpeed)
     {
         timeSinceLastFrame = 0.0f;
         currentFrame = (currentFrame + 1) % frameCount;
+
     }
 }
+
+
+
 
 void GameObject::draw()
 {
@@ -115,10 +130,34 @@ bool GameObject::isPlayer() const
 
 void GameObject::completeAction() 
 {
+    std::cout << getName() << " calls completeAction()." << std::endl;
     actionComplete = true;
 }
-
-bool GameObject::isAnimationComplete() const 
+bool GameObject::isAnimationComplete() const
 {
-    return currentFrame >= frameCount - 1;
+   
+    return currentFrame == frameCount - 1;
 }
+
+
+
+void GameObject::resetAction()
+{
+    actionComplete = false;
+    std::cout << getName() << " reset their action. actionComplete set to false." << std::endl;
+}
+
+std::string GameObject::getCurrentStateName() const
+{
+    if (currentState)
+    {
+        return typeid(*currentState).name();
+    }
+    return "NoState";
+}
+
+void GameObject::setPosition(const Vector2& newPos) 
+{
+    position = newPos;
+}
+
