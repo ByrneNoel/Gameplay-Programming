@@ -5,7 +5,7 @@ CXXFLAGS := -std=c++11 -Wall -Wextra -Werror -g
 # Directories
 BUILD_DIR := bin
 SRC_DIR := ./src
-RAYLIB_PATH := C:\mingw64
+RAYLIB_PATH := C:\MSYS2\mingw64
 
 TARGET := ./${BUILD_DIR}/game.exe
 LIBS := -L$(RAYLIB_PATH) -lraylib -lm -lpthread -lgdi32 -luser32 -lkernel32
